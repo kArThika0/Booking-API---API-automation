@@ -4,6 +4,11 @@ public class createBookingPayload {
 
     private String firstname;
     private String lastname;
+    private int totalprice;
+    private boolean depositpaid;
+    private String additionalneeds;
+    private BookingDates bookingdates;
+
 
     public int getTotalprice() {
         return totalprice;
@@ -42,20 +47,17 @@ public class createBookingPayload {
     }
 
     public void setAdditionalneeds(String additionalneeds) {
-        additionalneeds = additionalneeds;
+        this.additionalneeds = additionalneeds;
     }
 
-    public BookingDates getBookingDates() {
-        return bookingDates;
+    public BookingDates getBookingdates() {
+        return bookingdates;
     }
 
-    public void setBookingDates(BookingDates bookingDates) {
-        this.bookingDates = bookingDates;
+    public void setBookingDates(BookingDates bookingdates) {
+        this.bookingdates = bookingdates;
     }
 
-    private int totalprice;
-    private boolean depositpaid;
-    private String additionalneeds;
-    private BookingDates bookingDates;
+
 
 }

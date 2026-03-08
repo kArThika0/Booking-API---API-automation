@@ -1,35 +1,28 @@
 package stepDefinitions;
 
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.builder.ResponseBuilder;
-import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
-import pojo.createBookingPayload;
 import resources.BookerAPIEnum;
 import resources.testdataBuild;
 import resources.utils;
-import sun.security.timestamp.TSResponse;
-
 import java.io.IOException;
-
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 public class stepDefiniton extends utils {
+
     RequestSpecification req;
-    ResponseSpecification res;
-    boolean depositPaid2;
     Response response;
-
-
-
+    boolean depositPaid2;
     testdataBuild data = new testdataBuild();
+    RequestSpecification authReq;
+    Response authRes;
+
+
+    //create booking API
 
     @Given("a payload with booking details {string} {string} {int} {string} {string} {string} {string}")
     public void a_payload_with_booking_details(String firstname,
@@ -39,42 +32,73 @@ public class stepDefiniton extends utils {
                                                String checkin,
                                                String checkout,
                                                String needs) throws IOException {
+        // convert deposit from string to boolean
+        depositPaid2 = Boolean.parseBoolean(depositpaid);
 
-       depositPaid2 = Boolean.parseBoolean(depositpaid);
-        req =  given().log().all().spec(requestSpec()).body(data.createBookingReq(firstname,lastname,totalprice,depositPaid2,checkin,checkout,needs));
+        // build the request with payload
+        req = given()
+                .log().all()
+                .spec(requestSpec())
+                .body(data.createBookingReq(firstname, lastname, totalprice, depositPaid2, checkin, checkout, needs));
+
+        System.out.println("Request body prepared: " + data.createBookingReq(firstname, lastname, totalprice, depositPaid2, checkin, checkout, needs));
     }
-
 
     @When("the user calls {string} with {string} request")
     public void the_user_calls_with_request(String resource, String method) {
-       //constructor of BookerAPIEnum will ge called passing the resource value
         BookerAPIEnum resourceAPI = BookerAPIEnum.valueOf(resource);
-        System.out.println(resourceAPI.getResource());
-        //req.when().post("/booking").
+        System.out.println("Calling API: " + resourceAPI.getResource());
 
-        if(method.equalsIgnoreCase("POST"))
+        if (method.equalsIgnoreCase("POST")) {
             response = req.when().post(resourceAPI.getResource());
-        else if(method.equalsIgnoreCase("GET"))
+        } else if (method.equalsIgnoreCase("GET")) {
             response = req.when().get(resourceAPI.getResource());
-    }
+        }
 
+
+        System.out.println("Response received: " + response.asString());
+    }
 
     @Then("the response status should be {int}")
-    public void the_response_status_should_be(Integer expectedStatusCode) {
+    public void the_response_status_should_be(Integer expectedStatusCode) throws IOException {
 
-        assertEquals(response.getStatusCode(),200);
-        String actualStatusCode= getJsonPath(response,"status");
-        assertEquals(actualStatusCode,expectedStatusCode);
-
-
+        assertEquals((int) expectedStatusCode, response.getStatusCode());
     }
+
+
     @Then("the booking id is stored")
-    public void the_booking_id_is_stored() {
-
-        String bookingid = getJsonPath(response,"bookingid");
-
+    public void the_booking_id_is_stored(){
+        String bookingId = getJsonPath(response, "bookingid");
+        System.out.println("Booking ID: " + bookingId);
     }
 
 
+    // authorisation API
+
+
+        @Given("there are credentials {string} and {string}")
+        public void there_are_credentials_and(String username, String password) throws IOException {
+            authReq = given()
+                    .spec(requestSpec()) // clean base spec
+                    .body("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+            System.out.println("Auth request prepared: " + authReq);
+        }
+
+        @When("the user calls the authAPI {string} with {string} request")
+        public void call_auth_api(String resource, String method) {
+            BookerAPIEnum resourceAPI = BookerAPIEnum.valueOf(resource);
+
+            if (method.equalsIgnoreCase("POST")) {
+                authRes = authReq.when().post(resourceAPI.getResource());
+            }
+
+            System.out.println("Auth response: " + authRes);
+
+        }
+        @Then("the token generated is stored")
+        public void store_token() {
+            String token = getJsonPath(authRes, "token");
+            System.out.println("Token: " + token);
+        }
 
 }
