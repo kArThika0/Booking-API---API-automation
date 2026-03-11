@@ -10,6 +10,13 @@ public class createBookingPayload {
     private BookingDates bookingdates;
 
 
+
+    public void setBookingdates(BookingDates bookingdates) {
+        this.bookingdates = bookingdates;
+    }
+
+    private int bookingid;
+
     public int getTotalprice() {
         return totalprice;
     }

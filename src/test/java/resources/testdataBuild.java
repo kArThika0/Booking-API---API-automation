@@ -5,12 +5,12 @@ import pojo.createBookingPayload;
 
 public class testdataBuild {
 
-
+    createBookingPayload c= new createBookingPayload();
 
 
     public createBookingPayload createBookingReq(String firstname, String lastname, int totalprice, boolean depositPaid2, String checkin, String checkout, String additionalneeds){
 
-        createBookingPayload c= new createBookingPayload();
+
         c.setFirstname(firstname);
         c.setLastname(lastname);
         c.setTotalprice(totalprice);
@@ -26,4 +26,14 @@ public class testdataBuild {
 
 
     }
+
+    public String updateBookingReq(String lastname, String additionalneeds){
+
+        return "{\n" +
+                "    \"lastname\" : \"" + lastname + "\",\n" +
+                "    \"additionalneeds\" : \"" + additionalneeds + "\"\n" +
+                "}";
+
+    }
+
 }
