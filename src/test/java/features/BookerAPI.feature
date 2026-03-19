@@ -42,3 +42,12 @@ Feature: Booking API
       | lastname | additionalneeds |
       | Taylor   | Dinner          |
      #| Wilson   | Lunch           |
+
+
+@DeleteBooking
+Scenario:Delete booking
+  Given the user has bookingid
+  When the user calls "deleteBooking" with "DELETE" request
+  And the response should have "Created"
+  When the user calls "bookingById" with "GET" request
+  And the response should have "Not Found"

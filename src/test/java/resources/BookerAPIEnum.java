@@ -6,7 +6,8 @@ public enum BookerAPIEnum {
         createTokenAPI("/auth"),
             updateBooking("/booking/{id}"),
     bookingById("/booking/{id}"),
-    partialUpdateBooking("/booking/{id}");
+    partialUpdateBooking("/booking/{id}"),
+    deleteBooking("/booking/{id}");
     private String resource;
 
 

@@ -61,6 +61,8 @@ public class stepDefiniton extends utils {
             response = req.when().put(resourceAPI.getResource());
         } else if (method.equalsIgnoreCase("PATCH")) {
             response = req.when().patch(resourceAPI.getResource());
+        } else if ( method.equalsIgnoreCase("DELETE")) {
+            response = req.when().delete(resourceAPI.getResource());
         }
 
         System.out.println("Response received: " + response.asString());
@@ -166,6 +168,20 @@ public class stepDefiniton extends utils {
         assertEquals(actualAdditionalNeeds,expectedAdditionalneeds);
 
 
+
+    }
+
+
+    //Delete booking
+    @Given("the user has bookingid")
+    public void the_user_has_bookingid() throws IOException {
+        req = given().spec(requestSpec()).pathParam("id",bookingId).header("Cookie","token=" + token);
+    }
+    @Then("the response should have {string}")
+    public void the_response_should_have(String expectedResponse) {
+
+        String actualResponse=response.getBody().asString();
+        assertEquals(actualResponse, expectedResponse);
 
     }
 
